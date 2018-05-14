@@ -32,11 +32,35 @@ public class WebController {
 
     }
 
+    @GetMapping("/mainPage")
+    public String main(){
+
+        //model.addAttribute("name","railway");
+
+        return "main";
+
+
+    }
+
+    @GetMapping("/search")
+    public  String proces(@RequestParam(name="city_from") String cityFrom,
+        @RequestParam(name="city_to") String cityTo,
+        @RequestParam(name="depurt_date") String depurtDate,
+        Model model) {
+     model.addAttribute("c_from",cityFrom);
+     model.addAttribute("c_to",cityTo);
+     model.addAttribute("depurt_date",depurtDate);
+
+        return "result";
+    }
+
+
     public static void main(String[] args) {
 
         SpringApplication.run(WebController.class,args);
 
     }
+
 
 
 }
