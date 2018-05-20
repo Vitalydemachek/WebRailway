@@ -6,13 +6,29 @@
 </head>
 <body>
 
-
-Из города <span th:text="${c_from}"></span>
+<h1> Из города <span th:text="${c_from}"></span>
 в город  <span th:text="${c_to}"></span>
 на дату <span th:text="${d_date}"></span>
-есть места
+есть места 
+</h1>h1
+<br/><br/>
+  <div>
+         <table border="3">
+            <tr>
+               <th>Trip</th>
+               <th>Seat</th>
+               <th>Carriage</th>
+               <th>Carriage</th>
+               <th>Depart date</th>
+            </tr>
+            <tr th:each ="emtySeat : ${emptySeats}">
+               <td th:utext="${person.firstName}">...</td>
+               <td th:utext="${person.lastName}">...</td>
+            </tr>
+         </table>
+      </div>
 
 
-<p th:text="'Well done , ' + ${name} + '!'" />
+<p th:text="'Congratulate well done , ' + ${name} + '!'" />
 </body>
 </html>

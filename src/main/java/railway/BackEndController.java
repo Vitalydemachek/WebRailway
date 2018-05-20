@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Created by pro-27 on 26.02.2018.
  */
-public class Controller {
+public class BackEndController {
 
     ArrayList<City> list = new ArrayList<City>();
     ArrayList<Part> listParts = new ArrayList<Part>();
