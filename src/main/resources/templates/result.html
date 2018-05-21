@@ -22,8 +22,8 @@
                <th>Depart date</th>
             </tr>
             <tr th:each ="emtySeat : ${emptySeats}">
-               <td th:utext="${person.firstName}">...</td>
-               <td th:utext="${person.lastName}">...</td>
+               <td th:utext="${emtySeat.trip.number}">...</td>
+               <td th:utext="${emtySeat.seat.type}">...</td>
             </tr>
          </table>
       </div>

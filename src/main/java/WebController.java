@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -14,8 +15,7 @@ import railway.*;
 @Controller
 @EnableAutoConfiguration
 public class WebController {
-    
-    private static List<Ticket> AppropriatTicckets = new ArrayList<Ticket>();
+
     private BackEndController backEndController = new BackEndController(); 
     
 //    @RequestMapping("/")
@@ -53,13 +53,18 @@ public class WebController {
     public  String proces(@RequestParam(name="city_from") String cityFrom,
         @RequestParam(name="city_to") String cityTo,
         @RequestParam(name="depurt_date") String depurtDate,
-        Model model) { 
-     AppropriatTicckets = (List<Ticket>)backEndController.saleTickets(cityFrom, cityTo, depurtDate);
+        Model model) {
+
+     HashSet<Ticket> AppropriatTicckets;
+     City cityF = new City(cityFrom);
+     City cityT = new City(cityTo);
+     AppropriatTicckets = backEndController.saleTickets(cityF, cityT, depurtDate);
         
         
      model.addAttribute("c_from",cityFrom);
      model.addAttribute("c_to",cityTo);
      model.addAttribute("depurt_date",depurtDate);
+     model.addAttribute("emptySeats",AppropriatTicckets);
 
         return "result";
     }
