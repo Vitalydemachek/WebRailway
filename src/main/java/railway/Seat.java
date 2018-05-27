@@ -9,6 +9,6 @@ public class Seat {
     
 public boolean isBookedBy(BookedTicket t){
        return t.getTicket().seat.equals(this);
-    }    
+    } 
     
 }

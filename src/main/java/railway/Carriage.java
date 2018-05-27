@@ -15,5 +15,4 @@ public class Carriage {
         this.number = number;       
     }
     
-    
 }

@@ -104,7 +104,7 @@ public class BackEndController {
         String pattern = "HH:mm:ss dd.MM.yyyy";
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime requiredDate = LocalDateTime.parse(date, f);
-        ComparatorStops OrderStopsByDate = new ComparatorStops();
+        ComparatorStops OrderStopsByDate = new ComparatorStops(); 
         HashSet<Ticket> tickets = new HashSet();
 
         Map<Trip, List<Stop>> stopsByTrip = SetStops
@@ -137,6 +137,8 @@ public class BackEndController {
                     linkedEmptySeats.forEach(emptySeat -> {
 
                         Ticket t_ = new Ticket(trip, stopFrom.city, stopTo.city, stopFrom.date, emptySeat, crr, "Петя");
+                        
+                        
 
                         tickets.add(t_);
 

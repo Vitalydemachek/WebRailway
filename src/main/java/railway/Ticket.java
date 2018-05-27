@@ -23,6 +23,6 @@ public class Ticket {
   this.carriag = c_;
   this.ferst_name =fn_;
     
-          }
+          } 
     
 }

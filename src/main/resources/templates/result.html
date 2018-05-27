@@ -16,19 +16,22 @@
          <table border="3">
             <tr>
                <th>Trip</th>
+               <th>Seat type</th>
                <th>Seat</th>
-               <th>Carriage</th>
                <th>Carriage</th>
                <th>Depart date</th>
             </tr>
-            <tr th:each ="emtySeat : ${emptySeats}">
+            <tr th:each ="emtySeat : ${emptySeats}"> 
                <td th:utext="${emtySeat.trip.number}">...</td>
                <td th:utext="${emtySeat.seat.type}">...</td>
+               <td th:utext="${emtySeat.seat.number}">...</td>
+               <td th:utext="${emtySeat.carriag.number}">...</td>
+               <td th:utext="${emtySeat.date}">...</td>
             </tr>
          </table>
       </div>
 
 
-<p th:text="'Congratulate well done , ' + ${name} + '!'" />
+<!--<p th:text="'Congratulate well done , ' + ${name} + '!'" />
 </body>
 </html>

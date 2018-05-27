@@ -1,6 +1,13 @@
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
@@ -58,12 +65,17 @@ public class WebController {
      HashSet<Ticket> AppropriatTicckets;
      City cityF = new City(cityFrom);
      City cityT = new City(cityTo);
-     AppropriatTicckets = backEndController.saleTickets(cityF, cityT, depurtDate);
-        
+     
+     String externalPattern = "yyyy-MM-dd";
+     String internalPattern = "HH:mm:ss dd.MM.yyyy";
+     DateTimeFormatter externalf = DateTimeFormatter.ofPattern(externalPattern);
+     DateTimeFormatter internalf = DateTimeFormatter.ofPattern(internalPattern);
+    String internalDepurtDate = LocalDate.parse(depurtDate, externalf).atStartOfDay().format(internalf);
+     AppropriatTicckets = backEndController.saleTickets(cityF, cityT, internalDepurtDate);
         
      model.addAttribute("c_from",cityFrom);
      model.addAttribute("c_to",cityTo);
-     model.addAttribute("depurt_date",depurtDate);
+     model.addAttribute("d_date",depurtDate);
      model.addAttribute("emptySeats",AppropriatTicckets);
 
         return "result";
