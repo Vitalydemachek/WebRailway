@@ -15,8 +15,8 @@ public class BackEndController {
     HashSet<Trip> SetTrips = new HashSet();
     HashSet<Stop> SetStops = new HashSet();
     HashSet<Carriage> SetCarriage = new HashSet();
-    List<railway.TypeCarriage> TypeCarriage = new ArrayList<>();
-    //Map<Ticket, List<Stop>> MapBooking = new HashMap();
+    HashSet<Seat> SetSeat = new HashSet();
+    List<TypeCarriage> TypeCarriage = new ArrayList<>();
     List<BookedTicket> bookedTickets = new ArrayList<>();
 
     public void addCity(City c) {
@@ -104,7 +104,7 @@ public class BackEndController {
         String pattern = "HH:mm:ss dd.MM.yyyy";
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime requiredDate = LocalDateTime.parse(date, f);
-        ComparatorStops OrderStopsByDate = new ComparatorStops(); 
+        ComparatorStops OrderStopsByDate = new ComparatorStops();
         HashSet<Ticket> tickets = new HashSet();
 
         Map<Trip, List<Stop>> stopsByTrip = SetStops
@@ -129,7 +129,13 @@ public class BackEndController {
                         .collect(Collectors.toList());
 
                 linkedCarr.forEach(crr -> {
-                    List<Seat> carriageConsisOfSeats = crr.type.setSeats;
+
+                    //change stracture classes TypeCarriage,Seat 
+                    //List<Seat> carriageConsisOfSeats = crr.type.setSeats;
+                    List<Seat> carriageConsisOfSeats = SetSeat.stream().filter(seat
+                            -> seat.typeCrr.equals(crr.type)).collect(Collectors.toList());
+                    //change stracture classes TypeCarriage,Seat 
+
                     List<Seat> linkedEmptySeats = carriageConsisOfSeats.stream().filter(seat
                             -> linkedBookedTickets.stream()
                                     .noneMatch(ticket -> ticket.assignedTo(crr) && seat.isBookedBy(ticket) && ticket.getResoltCheckIntersectionStops(stopFrom, stopTo))).collect(Collectors.toList());
@@ -137,8 +143,6 @@ public class BackEndController {
                     linkedEmptySeats.forEach(emptySeat -> {
 
                         Ticket t_ = new Ticket(trip, stopFrom.city, stopTo.city, stopFrom.date, emptySeat, crr, "Петя");
-                        
-                        
 
                         tickets.add(t_);
 
@@ -150,35 +154,6 @@ public class BackEndController {
             }
 
         });
-
-        City c1 = new City("NVS");
-        City c2 = new City("MSK");
-        City c3 = new City("Oms");
-        City c4 = new City("SPT");
-
-        String tDate1 = "19:27:00 19.05.2018";
-        String tDate2 = "10:37:00 25.03.2018";
-        LocalDateTime tDate1LDT = LocalDateTime.parse(tDate1, f);
-        LocalDateTime tDate2LDT = LocalDateTime.parse(tDate2, f);
-
-        Trip tr1 = new Trip("7",c1,c2,tDate1LDT);
-        Trip tr2 = new Trip("9",c3,c4,tDate2LDT);
-
-        Seat s1 = new Seat();
-        s1.type = "верхнее";
-        s1.number = 3;
-        Seat s2 = new Seat();
-        s2.type = "нижнее";
-        s2.number = 5;
-        List<Seat> LSeats = new ArrayList<>(Arrays.asList(s1,s2));
-        TypeCarriage tCarr = new TypeCarriage("купе",LSeats);
-
-        Carriage crr1 = new Carriage(tr1,tCarr,1);
-
-        Ticket t1 = new Ticket(tr1,c1,c2,tDate1LDT,s1,crr1,"");
-        Ticket t2 = new Ticket(tr2,c3,c4,tDate2LDT,s1,crr1,"");
-        tickets.add(t1);
-        tickets.add(t2);
 
         return tickets;
 
