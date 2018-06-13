@@ -5,9 +5,9 @@ package railway;
  */
 public class Seat {
     
-    //change stracture classes TypeCarriage,Seat 
+    //change structure classes TypeCarriage,Seat
     TypeCarriage typeCrr; 
-    //change stracture classes TypeCarriage,Seat 
+    //change structure classes TypeCarriage,Seat
    
     String type;
     int number;

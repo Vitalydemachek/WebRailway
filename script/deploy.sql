@@ -29,7 +29,7 @@ city varchar references cities(name)
 
 create table typecarriage(
 ID serial not null primary key,
-typeDiscription varchar
+typeDescription varchar
 );
 
 create table seats(
@@ -136,7 +136,7 @@ insert into stops(id,arrive_date,tripID,city) values
 (33,'2018-05-16 22:00:00',106,'chelybinsk'),
 (34,'2018-05-17 09:00:00',106,'msk');
 
-insert into typecarriage(id,typeDiscription) values
+insert into typecarriage(id,typeDescription) values
 (1,'купе'),
 (2,'плацкарт');
 

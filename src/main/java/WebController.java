@@ -1,4 +1,5 @@
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
@@ -23,8 +25,8 @@ import railway.*;
 @EnableAutoConfiguration
 public class WebController {
 
-    private BackEndController backEndController = new BackEndController(); 
-    
+    private BackEndController backEndController = new BackEndController();
+
 //    @RequestMapping("/")
 //    @ResponseBody
 //    public String Home() {
@@ -37,57 +39,52 @@ public class WebController {
 //    }
 
     @GetMapping("/greeting")
-    public String greet(@RequestParam(name="str",required = false,defaultValue = "world") String name, Model model){
+    public String greet(@RequestParam(name = "str", required = false, defaultValue = "world") String name, Model model) {
 
-        model.addAttribute("name","railway");
+        model.addAttribute("name", "railway");
 
-       return "greeting";
-
+        return "greeting";
 
     }
 
     @GetMapping("/mainPage")
-    public String main(){
+    public String main() {
 
         //model.addAttribute("name","railway");
 
         return "main";
 
-
     }
 
     @GetMapping("/search")
-    public  String proces(@RequestParam(name="city_from") String cityFrom,
-        @RequestParam(name="city_to") String cityTo,
-        @RequestParam(name="depurt_date") String depurtDate,
-        Model model) {
+    public String process(@RequestParam(name = "city_from") String cityFrom,
+                          @RequestParam(name = "city_to") String cityTo,
+                          @RequestParam(name = "depurt_date") String depurtDate,
+                          Model model) throws ClassNotFoundException, SQLException {
 
-     HashSet<Ticket> AppropriatTicckets;
-     City cityF = new City(cityFrom);
-     City cityT = new City(cityTo);
-     
-     String externalPattern = "yyyy-MM-dd";
-     String internalPattern = "HH:mm:ss dd.MM.yyyy";
-     DateTimeFormatter externalf = DateTimeFormatter.ofPattern(externalPattern);
-     DateTimeFormatter internalf = DateTimeFormatter.ofPattern(internalPattern);
-    String internalDepurtDate = LocalDate.parse(depurtDate, externalf).atStartOfDay().format(internalf);
-     AppropriatTicckets = backEndController.saleTickets(cityF, cityT, internalDepurtDate);
-        
-     model.addAttribute("c_from",cityFrom);
-     model.addAttribute("c_to",cityTo);
-     model.addAttribute("d_date",depurtDate);
-     model.addAttribute("emptySeats",AppropriatTicckets);
+        HashSet<TicketWeb> AppropriatTicckets;
+        City cityF = new City(cityFrom);
+        City cityT = new City(cityTo);
+
+        String externalPattern = "yyyy-MM-dd";
+        String internalPattern = "HH:mm:ss dd.MM.yyyy";
+        DateTimeFormatter externalf = DateTimeFormatter.ofPattern(externalPattern);
+        DateTimeFormatter internalf = DateTimeFormatter.ofPattern(internalPattern);
+        String internalDepurtDate = LocalDate.parse(depurtDate, externalf).atStartOfDay().format(internalf);
+        AppropriatTicckets = backEndController.saleTickets(cityF, cityT, internalDepurtDate);
+
+        model.addAttribute("c_from", cityFrom);
+        model.addAttribute("c_to", cityTo);
+        model.addAttribute("d_date", depurtDate);
+        model.addAttribute("emptySeats", AppropriatTicckets);
 
         return "result";
     }
 
-
     public static void main(String[] args) {
 
-        SpringApplication.run(WebController.class,args);
+        SpringApplication.run(WebController.class, args);
 
     }
-
-
 
 }

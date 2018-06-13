@@ -4,8 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -129,11 +128,11 @@ public class railway {
 
         DataMapper onesMapper = new DataMapper();
 
-        onesMapper.ConnectDB("postgres","123");
+        onesMapper.ConnectDB("postgres","Natanmorderlamb13");
 
        HashSet s=onesMapper.loadCities();
        
-       HashSet<Trip> t = onesMapper.loadTrip(s);
+       HashMap<Integer,Trip> t = onesMapper.loadTrip(s);
 
        Assert.assertNotEquals(0,s.size());
 

@@ -1,5 +1,6 @@
 package railway;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -60,7 +61,7 @@ public class BackEndController {
         return false;
     }
 
-    public Trip creatTrip(String tripNumber, City From_, City To_, String depurtureDateTime) {
+    public Trip createTrip(String tripNumber, City From_, City To_, String depurtureDateTime) {
 
         String pattern = "HH:mm:ss dd.MM.yyyy";
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
@@ -82,7 +83,7 @@ public class BackEndController {
 
     }
 
-    public Stop creatStop(String arriveDate, Trip relateTrip, City arriveCity) {
+    public Stop createStop(String arriveDate, Trip relateTrip, City arriveCity) {
         String pattern = "HH:mm:ss dd.MM.yyyy";
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime datArr = LocalDateTime.parse(arriveDate, f);
@@ -94,68 +95,119 @@ public class BackEndController {
         return nextStop;
     }
 
-    public Carriage creatCarriage(Trip reletedTrip, railway.TypeCarriage carriagtype, int carriagNumber) {
+    public Carriage createCarriage(Trip reletedTrip, railway.TypeCarriage carriagtype, int carriagNumber) {
         Carriage carr = new Carriage(reletedTrip, carriagtype, carriagNumber);
         SetCarriage.add(carr);
         return carr;
     }
 
-    public HashSet<Ticket> saleTickets(City from, City to, String date) {
+    //Pay attention, this is one of important approaches of project
+    public HashSet<TicketWeb> saleTickets(City from, City to, String date) throws ClassNotFoundException {
+
+        HashSet<TicketWeb> ticketsWeb = new HashSet();
+
+        //get data of sql tables
+        try{
+        DataMapper onesMapper = new DataMapper();
+        onesMapper.ConnectDB("postgres", "Natanmorderlamb13");
+        HashSet ci = onesMapper.loadCities();
+        HashMap<Integer, Trip> tr = onesMapper.loadTrip(ci);
+        HashMap<Integer, Stop> st = onesMapper.LoadStop(ci, tr);
+        HashMap<Integer, TypeCarriage> tc = onesMapper.LoadTypeCarriage();
+        HashMap<Integer, Seat> se = onesMapper.LoadSeats(tc);
+        HashMap<Integer, Carriage> cr = onesMapper.LoadCarriage(tr, tc);
+        HashMap<Integer, Ticket> tck = onesMapper.LoadTicket(ci, tr, se, cr);
+        List<BookedTicket> btck = onesMapper.loadBookedTicket(tck, st);
+
+        SetStops.addAll(st.values());
+        SetCarriage.addAll(cr.values());
+        bookedTickets.addAll(btck);
+        SetSeat.addAll(se.values());
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            System.out.println(e.getSQLState());
+            return ticketsWeb;
+
+        }
+
         String pattern = "HH:mm:ss dd.MM.yyyy";
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime requiredDate = LocalDateTime.parse(date, f);
         ComparatorStops OrderStopsByDate = new ComparatorStops();
-        HashSet<Ticket> tickets = new HashSet();
+        //HashSet<Ticket> tickets = new HashSet();
 
+        //receive stops according to data request and turn list stops into map where key is trip and object is list stops
         Map<Trip, List<Stop>> stopsByTrip = SetStops
                 .stream()
                 .filter(s -> s.matches(from, to, requiredDate))
                 .collect((Collectors.groupingBy(s -> s.trip)));
 
+        //determine empty seat for each trip
         stopsByTrip.forEach((trip, stopList) -> {
-            if (stopList.size() > 1) {
-                stopList.sort(OrderStopsByDate);
 
+            //check that there are both required stops on the trip(departure stop and arriving stop)
+            if (stopList.size() > 1) {
+
+                //order stops by date and determine what stop is (from or to)
+                stopList.sort(OrderStopsByDate);
                 Stop stopFrom = stopList.get(0);
                 Stop stopTo = stopList.get(1);
 
+                //find out carriages related with current trip
                 List<Carriage> linkedCarr = SetCarriage
                         .stream()
                         .filter(crr -> crr.trip.equals(trip))
                         .collect(Collectors.toList());
 
+                //define what tickets of current trip have been booked yet
                 List<BookedTicket> linkedBookedTickets = bookedTickets.stream()
                         .filter(ticket -> ticket.getTicket().trip.equals(trip))
                         .collect(Collectors.toList());
 
+                //define empty seats for each carriage of current trip
                 linkedCarr.forEach(crr -> {
 
-                    //change stracture classes TypeCarriage,Seat 
-                    //List<Seat> carriageConsisOfSeats = crr.type.setSeats;
-                    List<Seat> carriageConsisOfSeats = SetSeat.stream().filter(seat
-                            -> seat.typeCrr.equals(crr.type)).collect(Collectors.toList());
-                    //change stracture classes TypeCarriage,Seat 
+                            //get set of seats related with current carriage
+                            ////change structure classes TypeCarriage,Seat
+                            ////List<Seat> carriageConsistOfSeats = crr.type.setSeats;
+                            List<Seat> carriageConsistOfSeats = SetSeat.stream().filter(seat
+                                    -> seat.typeCrr.equals(crr.type)).collect(Collectors.toList());
+                            //change structure classes TypeCarriage,Seat
 
-                    List<Seat> linkedEmptySeats = carriageConsisOfSeats.stream().filter(seat
-                            -> linkedBookedTickets.stream()
-                                    .noneMatch(ticket -> ticket.assignedTo(crr) && seat.isBookedBy(ticket) && ticket.getResoltCheckIntersectionStops(stopFrom, stopTo))).collect(Collectors.toList());
+                            //cut out booked seats from available seats of current carriage
+                            List<Seat> linkedEmptySeats = carriageConsistOfSeats.stream().filter(seat
+                                    -> linkedBookedTickets.stream()
+                                    .noneMatch(ticket
+                                            //check of current carriage match the booked ticket's carriage
+                                            -> ticket.assignedTo(crr)
+                                            //check of seat of current carriage mentioned in booked ticket
+                                            && seat.isBookedBy(ticket)
+                                            //check of intersection of required date's interval ("stopFrom' and "stopTo")
+                                            // and date's interval already booked for current trip
+                                            && ticket.getResoltCheckIntersectionStops(stopFrom, stopTo))).collect(Collectors.toList());
 
-                    linkedEmptySeats.forEach(emptySeat -> {
+                            linkedEmptySeats.forEach(emptySeat -> {
 
-                        Ticket t_ = new Ticket(trip, stopFrom.city, stopTo.city, stopFrom.date, emptySeat, crr, "Петя");
+                                //Ticket t_ = new Ticket(trip, stopFrom.city, stopTo.city, stopFrom.date, emptySeat, crr, "ServiceValue");
+                                TicketWeb tw = new TicketWeb(trip.number, String.valueOf(crr.number), emptySeat.type, String.valueOf(emptySeat.number), stopFrom.date.toString());
 
-                        tickets.add(t_);
+                                ticketsWeb.add(tw);
 
-                    });
+                            });
 
-                }
+                        }
                 );
 
             }
 
         });
 
-        return tickets;
+        ticketsWeb.stream().sorted(Comparator.comparing(TicketWeb::));
+
+        return ticketsWeb;
 
     }
 
