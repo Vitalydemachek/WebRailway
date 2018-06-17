@@ -10,19 +10,19 @@ public class Stop {
     Trip trip;
     City city;
 
-    public Stop(LocalDateTime d_, Trip t_, City c_){
-       this.date = d_;
-       this.trip = t_;
-       this.city = c_;
+    public Stop(LocalDateTime d_, Trip t_, City c_) {
+        this.date = d_;
+        this.trip = t_;
+        this.city = c_;
 
     }
-    
-public boolean matches(City from, City to, LocalDateTime requiredDate){
+
+    public boolean matches(City from, City to, LocalDateTime requiredDate) {
         boolean matchesByCity = this.city.equals(from) || this.city.equals(to);
         boolean matchesByDate = !date.isBefore(requiredDate);
         return matchesByCity && matchesByDate;
-     }    
-       
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

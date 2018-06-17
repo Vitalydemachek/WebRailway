@@ -200,10 +200,12 @@ insert into carriage(id,tripID,typeCrr_ID,numberCarriage) values
 insert into ticket(id,tripID,city_from,city_to,departure_date,seatID,carrID,customerFirstName) values
 --100
 (1,100,'novosibirsk','habarovsk','2018-05-10 11:00:00',3,1,'Петя'),
+(2,100,'krasnoyrsk','vladivostok','2018-05-10 22:00:00',7,3,'Глаша'),
 --102
-(2,102,'habarovsk','vladivostok','2018-05-12 11:00:00',38,10,'Вася');
+(3,102,'habarovsk','vladivostok','2018-05-12 11:00:00',38,10,'Вася');
 
 insert into bookedTicket(id,ticketID,stopFromID,stopToID) values
 (1,1,2,5),
-(2,2,16,17);
+(2,2,3,6),
+(3,3,16,17);
 

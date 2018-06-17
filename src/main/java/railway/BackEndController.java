@@ -205,8 +205,6 @@ public class BackEndController {
 
         });
 
-        ticketsWeb.stream().sorted(Comparator.comparing(TicketWeb::));
-
         return ticketsWeb;
 
     }

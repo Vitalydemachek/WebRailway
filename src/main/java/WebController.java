@@ -5,10 +5,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -62,7 +60,7 @@ public class WebController {
                           @RequestParam(name = "depurt_date") String depurtDate,
                           Model model) throws ClassNotFoundException, SQLException {
 
-        HashSet<TicketWeb> AppropriatTicckets;
+        HashSet<TicketWeb> AppropriateTickets;
         City cityF = new City(cityFrom);
         City cityT = new City(cityTo);
 
@@ -71,12 +69,17 @@ public class WebController {
         DateTimeFormatter externalf = DateTimeFormatter.ofPattern(externalPattern);
         DateTimeFormatter internalf = DateTimeFormatter.ofPattern(internalPattern);
         String internalDepurtDate = LocalDate.parse(depurtDate, externalf).atStartOfDay().format(internalf);
-        AppropriatTicckets = backEndController.saleTickets(cityF, cityT, internalDepurtDate);
+        AppropriateTickets = backEndController.saleTickets(cityF, cityT, internalDepurtDate);
+
+        List<TicketWeb> orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.TripNumberComparator.
+                thenComparing(TicketWeb.carrNumberComparator).
+                thenComparing(TicketWeb.seatNumberComparator)).collect(Collectors.toList());
+
 
         model.addAttribute("c_from", cityFrom);
         model.addAttribute("c_to", cityTo);
         model.addAttribute("d_date", depurtDate);
-        model.addAttribute("emptySeats", AppropriatTicckets);
+        model.addAttribute("emptySeats", orderedAppropriateTickets);
 
         return "result";
     }
