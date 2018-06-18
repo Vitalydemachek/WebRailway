@@ -15,10 +15,10 @@
   <div>
          <table border="3">
             <tr>
-               <th>Trip</th>
+               <th>Trip <a href="/search?city_from=${c_from}&city_to=${c_to}&depurt_date=${d_date}&order=tn">Trip</a></th>
                <th>Seat type</th>
-               <th>Seat</th>
-               <th>Carriage</th>
+               <th>Seat <a href="/search?city_from=${c_from}&city_to=${c_to}&depurt_date=${d_date}&order=sn">Seat</a></th>
+               <th>Carriage <a href="/search?city_from=${c_from}&city_to=${c_to}&depurt_date=${d_date}&order=cn">Carriage</a></th>
                <th>Depart date</th>
             </tr>
             <tr th:each ="emtySeat : ${emptySeats}"> 

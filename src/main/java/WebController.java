@@ -58,6 +58,7 @@ public class WebController {
     public String process(@RequestParam(name = "city_from") String cityFrom,
                           @RequestParam(name = "city_to") String cityTo,
                           @RequestParam(name = "depurt_date") String depurtDate,
+                          @RequestParam(name = "order",required = false) String order,
                           Model model) throws ClassNotFoundException, SQLException {
 
         HashSet<TicketWeb> AppropriateTickets;
@@ -70,16 +71,38 @@ public class WebController {
         DateTimeFormatter internalf = DateTimeFormatter.ofPattern(internalPattern);
         String internalDepurtDate = LocalDate.parse(depurtDate, externalf).atStartOfDay().format(internalf);
         AppropriateTickets = backEndController.saleTickets(cityF, cityT, internalDepurtDate);
+        List<TicketWeb> orderedAppropriateTickets;
 
-        List<TicketWeb> orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.TripNumberComparator.
+//        List<TicketWeb> orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.TripNumberComparator.
+//                thenComparing(TicketWeb.carrNumberComparator).
+//                thenComparing(TicketWeb.seatNumberComparator)).collect(Collectors.toList());
+
+        if (order == "tn"){
+
+            orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.TripNumberComparator).collect(Collectors.toList());
+
+        }else if (order=="cn"){
+
+            orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.carrNumberComparator).collect(Collectors.toList());
+
+        }else if (order == "sn"){
+
+            orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.seatNumberComparator).collect(Collectors.toList());
+
+        }else{
+
+            orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.TripNumberComparator.
                 thenComparing(TicketWeb.carrNumberComparator).
                 thenComparing(TicketWeb.seatNumberComparator)).collect(Collectors.toList());
 
+        }
 
         model.addAttribute("c_from", cityFrom);
         model.addAttribute("c_to", cityTo);
         model.addAttribute("d_date", depurtDate);
         model.addAttribute("emptySeats", orderedAppropriateTickets);
+
+
 
         return "result";
     }
