@@ -12,10 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import railway.*;
 
 
@@ -55,10 +52,11 @@ public class WebController {
     }
 
     @GetMapping("/search")
+    @PostMapping("/search")
     public String process(@RequestParam(name = "city_from") String cityFrom,
                           @RequestParam(name = "city_to") String cityTo,
                           @RequestParam(name = "depurt_date") String depurtDate,
-                          @RequestParam(name = "order",required = false) String order,
+                          @RequestParam(name = "order",required = false,defaultValue = "ass") String order,
                           Model model) throws ClassNotFoundException, SQLException {
 
         HashSet<TicketWeb> AppropriateTickets;
@@ -77,15 +75,15 @@ public class WebController {
 //                thenComparing(TicketWeb.carrNumberComparator).
 //                thenComparing(TicketWeb.seatNumberComparator)).collect(Collectors.toList());
 
-        if (order == "tn"){
+        if (order.equals("tn")){
 
             orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.TripNumberComparator).collect(Collectors.toList());
 
-        }else if (order=="cn"){
+        }else if (order.equals("cn")){
 
             orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.carrNumberComparator).collect(Collectors.toList());
 
-        }else if (order == "sn"){
+        }else if (order.equals("sn")){
 
             orderedAppropriateTickets = AppropriateTickets.stream().sorted(TicketWeb.seatNumberComparator).collect(Collectors.toList());
 
@@ -101,8 +99,6 @@ public class WebController {
         model.addAttribute("c_to", cityTo);
         model.addAttribute("d_date", depurtDate);
         model.addAttribute("emptySeats", orderedAppropriateTickets);
-
-
 
         return "result";
     }

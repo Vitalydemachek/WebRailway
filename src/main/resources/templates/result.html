@@ -2,34 +2,47 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 
 <h1> Из города <span th:text="${c_from}"></span>
-в город  <span th:text="${c_to}"></span>
-на дату <span th:text="${d_date}"></span>
-есть места 
+    в город <span th:text="${c_to}"></span>
+    на дату <span th:text="${d_date}"></span>
+    есть места
 </h1>
+
 <br/><br/>
-  <div>
-         <table border="3">
-            <tr>
-               <th>Trip <a href="/search?city_from=${c_from}&city_to=${c_to}&depurt_date=${d_date}&order=tn">Trip</a></th>
-               <th>Seat type</th>
-               <th>Seat <a href="/search?city_from=${c_from}&city_to=${c_to}&depurt_date=${d_date}&order=sn">Seat</a></th>
-               <th>Carriage <a href="/search?city_from=${c_from}&city_to=${c_to}&depurt_date=${d_date}&order=cn">Carriage</a></th>
-               <th>Depart date</th>
-            </tr>
-            <tr th:each ="emtySeat : ${emptySeats}"> 
-               <td th:utext="${emtySeat.tripeNumber}">...</td>
-               <td th:utext="${emtySeat.seatType}">...</td>
-               <td th:utext="${emtySeat.seatNumber}">...</td>
-               <td th:utext="${emtySeat.carrNumber}">...</td>
-               <td th:utext="${emtySeat.depDate}">...</td>
-            </tr>
-         </table>
-      </div>
+<div>
+
+    <a th:href="@{'\search'(city_from=${c_from},city_to=${c_to},depurt_date=${d_date},order=null)}" class="button">Preordained
+        sort</a>
+
+    <table border="3">
+        <tr>
+            <!--               <th>Trip <a th:href="@{${#httpServletRequest.requestURI}(city_from=${c_from},city_to=${c_to},depurt_date=${d_date},order=tn)}">Trip</a></th>/>-->
+            <th>Trip <a
+                    th:href="@{'\search'(city_from=${c_from},city_to=${c_to},depurt_date=${d_date},order=tn)}">Trip</a>
+            </th>
+            <th>Seat type</th>
+            <th>Seat <a
+                    th:href="@{'\search'(city_from=${c_from},city_to=${c_to},depurt_date=${d_date},order=sn)}">Seat</a>
+            </th>
+            <th>Carriage <a th:href="@{'\search'(city_from=${c_from},city_to=${c_to},depurt_date=${d_date},order=cn)}">Carriage</a>
+            </th>
+            <th>Depart date</th>
+        </tr>
+
+        <tr th:each="emtySeat : ${emptySeats}">
+            <td th:utext="${emtySeat.tripeNumber}">...</td>
+            <td th:utext="${emtySeat.seatType}">...</td>
+            <td th:utext="${emtySeat.seatNumber}">...</td>
+            <td th:utext="${emtySeat.carrNumber}">...</td>
+            <td th:utext="${emtySeat.depDate}">...</td>
+        </tr>
+
+    </table>
+</div>
 
 
 <!--<p th:text="'Congratulate well done , ' + ${name} + '!'" />-->
