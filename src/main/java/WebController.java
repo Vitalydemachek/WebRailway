@@ -52,7 +52,6 @@ public class WebController {
     }
 
     @GetMapping("/search")
-    @PostMapping("/search")
     public String process(@RequestParam(name = "city_from") String cityFrom,
                           @RequestParam(name = "city_to") String cityTo,
                           @RequestParam(name = "depurt_date") String depurtDate,
